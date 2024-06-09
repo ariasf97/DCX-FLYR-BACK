@@ -19,7 +19,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("GetFlightsByType-airports")]
-        public async Task<IActionResult> GetFlightsByType(Filter filter            )
+        public async Task<IActionResult> GetFlightsByType(Filter filter)
         {
             try
             {
