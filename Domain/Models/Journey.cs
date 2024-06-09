@@ -8,20 +8,21 @@ namespace Domain.Models
 {
     public class Journey
     {
-        public Journey(List<Flight> flights, string origin, string destination, double priceJourney)
+        public Journey(List<Flight> currentPath, string origin, string destination, double totalPrice)
         {
-            Flights = flights;
+            CurrentPath = currentPath;
             Origin = origin;
             Destination = destination;
-            Price = priceJourney;
+            TotalPrice = totalPrice;
         }
-
 
         public string Origin { get; set; }
         public string Destination { get; set; }
         public double Price { get; set; }
 
         public List<Flight> Flights { get; set; }
+        public List<Flight> CurrentPath { get; }
+        public double TotalPrice { get; }
     }
 }
 
