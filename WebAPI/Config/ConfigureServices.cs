@@ -1,4 +1,6 @@
-﻿using Infrastructure.Repository.Implementation;
+﻿using Application.Services.Implementation;
+using Application.Services.Interfaces;
+using Infrastructure.Repository.Implementation;
 using Infrastructure.Repository.Interfaces;
 
 namespace WebAPI.Config
@@ -7,13 +9,10 @@ namespace WebAPI.Config
     {
         public static void AddConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
-            // Capa de Infraestructura
+ 
             services.AddTransient<IFlightRepository, FlightRepository>();
-           
 
-
-            // Capa de Aplicación
-            //services.AddScoped<IFlightService, FlightService>();
+            services.AddScoped<IFlightService, FlightService>();
 
 
 

@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Application.Services.Interfaces;
+using Domain.Models;
 using Infrastructure.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,9 @@ namespace WebAPI.Controllers
     [ApiController]
     public class FlightController : ControllerBase
     {
-        private readonly IFlightRepository _flightService;
+        private readonly IFlightService _flightService;
 
-        public FlightController(IFlightRepository flightService)
+        public FlightController(IFlightService flightService)
         {
             _flightService = flightService;
         }

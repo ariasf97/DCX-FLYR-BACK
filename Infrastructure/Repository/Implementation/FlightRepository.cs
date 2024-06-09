@@ -1,5 +1,7 @@
-﻿using Domain.Exception;
+﻿using Domain.Enums;
+using Domain.Exception;
 using Domain.Models;
+using Infrastructure.helper;
 using Infrastructure.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -17,10 +19,11 @@ namespace Infrastructure.Repository.Implementation
         public FlightRepository()
         {
             this.adjacencyList = new Dictionary<string, List<Flight>>();
-            this.LoadFlightsFromJson();
+            
         }
 
-        private void LoadFlightsFromJson()
+
+        private void LoadFlightsFromJson(CurrencyType currencyType)
         {
 
             var jsonString = File.ReadAllText(JSON_FILE_PATH);
@@ -33,7 +36,7 @@ namespace Infrastructure.Repository.Implementation
                     value = [];
                     adjacencyList[flight.Origin] = value;
                 }
-
+                flight.Price = CurrencyConverter.Convert(flight.Price, currencyType);
                 value.Add(flight);
             }
         }
@@ -41,8 +44,12 @@ namespace Infrastructure.Repository.Implementation
         {
             return adjacencyList.TryGetValue(origin, out List<Flight>? value) ? value : [];
         }
-        public Task<List<Journey>> GetFlightsByType(Filter filter)
+        public Task<List<Journey>> GetFlightsByType(Filter filter,bool loadFlight)
         {
+            if (loadFlight) { this.LoadFlightsFromJson(filter.CurrencyType); }
+              
+           
+           
             string origin = filter.Origin;
             string destination = filter.Destination;
 
@@ -111,7 +118,7 @@ namespace Infrastructure.Repository.Implementation
         {
             string origin = filter.Origin;
             string destination = filter.Destination;
-
+            this.LoadFlightsFromJson(filter.CurrencyType);
             if (!adjacencyList.ContainsKey(origin) || !adjacencyList.ContainsKey(destination))
             {
                 throw new JourneysNotFoundException($"No journeys found for the specified origin: {origin} and destination: {destination}");
@@ -120,7 +127,7 @@ namespace Infrastructure.Repository.Implementation
             var roundtripJourneys = new List<Journey>();
 
             // Obtener vuelos de ida
-            var outboundJourneys = await GetFlightsByType(filter);
+            var outboundJourneys = await GetFlightsByType(filter,false);
 
             // Obtener vuelos de vuelta
             var returnFilter = new Filter
@@ -128,7 +135,7 @@ namespace Infrastructure.Repository.Implementation
                 Origin = destination,
                 Destination = origin
             };
-            var returnJourneys = await GetFlightsByType(returnFilter);
+            var returnJourneys = await GetFlightsByType(returnFilter, false);
 
             // Combinar vuelos de ida y vuelta
             foreach (var outboundJourney in outboundJourneys)
