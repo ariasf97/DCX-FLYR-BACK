@@ -107,6 +107,50 @@ namespace Infrastructure.Repository.Implementation
 
 
 
+        public async Task<List<Journey>> GetRoundtripFlights(Filter filter)
+        {
+            string origin = filter.Origin;
+            string destination = filter.Destination;
+
+            if (!adjacencyList.ContainsKey(origin) || !adjacencyList.ContainsKey(destination))
+            {
+                throw new JourneysNotFoundException($"No journeys found for the specified origin: {origin} and destination: {destination}");
+            }
+
+            var roundtripJourneys = new List<Journey>();
+
+            // Obtener vuelos de ida
+            var outboundJourneys = await GetFlightsByType(filter);
+
+            // Obtener vuelos de vuelta
+            var returnFilter = new Filter
+            {
+                Origin = destination,
+                Destination = origin
+            };
+            var returnJourneys = await GetFlightsByType(returnFilter);
+
+            // Combinar vuelos de ida y vuelta
+            foreach (var outboundJourney in outboundJourneys)
+            {
+                foreach (var returnJourney in returnJourneys)
+                {
+                    var totalPrice = outboundJourney.Price + returnJourney.Price;
+                    var journeyFlights = outboundJourney.Flights.Concat(returnJourney.Flights).ToList();
+
+                    roundtripJourneys.Add(new Journey(journeyFlights, origin, destination, totalPrice));
+                }
+            }
+
+            if (roundtripJourneys.Count == 0)
+            {
+                throw new JourneysNotFoundException($"No roundtrip journeys found for the specified origin: {origin} and destination: {destination}");
+            }
+
+            return roundtripJourneys;
+        }
+
+
 
 
     }

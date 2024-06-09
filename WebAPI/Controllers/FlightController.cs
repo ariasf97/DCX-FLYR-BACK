@@ -31,5 +31,19 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpPost("GetRoundtripFlights-airports")]
+        public async Task<IActionResult> GetRoundtripFlights(Filter filter)
+        {
+            try
+            {
+                var destinationAirports = await _flightService.GetRoundtripFlights(filter);
+                return Ok(new ApiResponse<List<Journey>>(destinationAirports, "Destination airports retrieved successfully."));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponse<string>(null, $"An error occurred: {ex.Message}"));
+            }
+        }
+
     }
 }
