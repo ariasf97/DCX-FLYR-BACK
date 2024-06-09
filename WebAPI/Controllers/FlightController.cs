@@ -28,7 +28,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new ApiResponse<string>(null, $"An error occurred: {ex.Message}"));
+                return StatusCode(404, new ApiResponse<List<Journey>>([], $"An error occurred: {ex.Message}"));
             }
         }
 
@@ -42,7 +42,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new ApiResponse<string>(null, $"An error occurred: {ex.Message}"));
+                return StatusCode(404, new ApiResponse<List<Journey>>([], $"An error occurred: {ex.Message}"));
             }
         }
 
